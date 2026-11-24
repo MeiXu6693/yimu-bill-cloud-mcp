@@ -4,10 +4,19 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
@@ -20,3 +29,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - name: Verify package contents
+        run: |
+          npm pack --dry-run --json > /tmp/pack.json
+          node -e "const p=require('/tmp/pack.json')[0];const f=new Set(p.files.map(x=>x.path));for(const k of ['src/index.js','src/version.js','src/server.js','vendor/api.js']){if(!f.has(k))throw new Error('missing '+k)}"

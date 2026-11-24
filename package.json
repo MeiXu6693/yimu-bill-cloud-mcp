@@ -34,5 +34,15 @@
   "license": "MIT",
   "engines": {
     "node": ">=22"
+  },
+  "files": [
+    "src",
+    "vendor",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "publishConfig": {
+    "access": "public"
   }
 }

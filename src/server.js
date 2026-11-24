@@ -4,9 +4,10 @@ import { registerBillTools } from "./tools/bill_write.js";
 import { registerTransferTools } from "./tools/transfer.js";
 import { registerReportTools } from "./tools/grouped/report.js";
 import { registerAdminTools } from "./tools/grouped/admin.js";
+import { VERSION } from "./version.js";
 
 export function createServer() {
-  const server = new McpServer({ name: "yimu-bill-cloud", version: "0.1.2" });
+  const server = new McpServer({ name: "yimu-bill-cloud", version: VERSION });
   registerReadTools(server);
   registerBillTools(server);
   registerTransferTools(server);

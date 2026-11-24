@@ -25,7 +25,7 @@
 git clone https://github.com/MeiXu6693/yimu-bill-cloud-mcp.git
 cd yimu-bill-cloud-mcp
 npm install
-npm test          # 17 个用例（含离线工具清单）
+npm test          # 19 个用例（含离线工具清单与 CLI）
 
 YIMU_TOKEN='<网页版 JWT>' YIMU_USER_ID='<用户ID>' node src/index.js
 ```
@@ -36,6 +36,9 @@ YIMU_TOKEN='<网页版 JWT>' YIMU_USER_ID='<用户ID>' node src/index.js
 |---|---|
 | `--list-tools` | 离线输出 11 个工具及其 JSON Schema（JSON），不需要 token；供安装检查、CI 与 DSH 兼容层使用 |
 | `--version` | 打印版本后退出 |
+| `--help` | 打印用法与环境变量说明后退出 |
+
+未知参数会打印用法并以退出码 2 结束。
 
 - `YIMU_TOKEN`：一木记账网页版登录后的 JWT（浏览器开发者工具里取），**不要提交到仓库**。
 - `YIMU_USER_ID`：可省略，会从 JWT 的 `aud` 推断。
@@ -111,7 +114,8 @@ DSH 侧不使用 `@deepseek-ai/dsh-mcp-client`，也不走 `mcpManager`：由
 ## 目录
 
 ```
-src/index.js          stdio 入口
+src/index.js          bin：参数解析 + stdio 启动
+src/version.js        版本唯一来源（读 package.json）
 src/server.js         注册 11 个工具
 src/config.js         env 配置（token/userId）
 src/client.js         官方 API 薄封装 + 瞬时失败重试
@@ -126,10 +130,20 @@ vendor/               上游 MIT 代码 + LICENSE
 test/                 mock API + 用例
 ```
 
+## 发布
+
+- 版本号只在 `package.json` 维护；`src/server.js` 与 CLI 都从 `src/version.js` 读取。
+- 打 tag 并推送：`git tag -a vX.Y.Z -m "..." && git push origin vX.Y.Z`。
+- tag 触发 [`.github/workflows/release.yml`](.github/workflows/release.yml)：测试 → 版本校验 →
+  GitHub Release（优先 `release-notes/<tag>.md`）。
+- 可选 npm：仓库 Secrets 配置 `NPM_TOKEN` 后自动 `npm publish`；未配置则跳过。
+
 ## 安全
 
-- `YIMU_TOKEN` 只放环境变量或本地配置，不进仓库；泄露后请重新登录网页版使其失效。
-- 本仓库不含任何真实 token；测试全部走 mock。
+- `YIMU_TOKEN` 只放环境变量或本地配置，不进仓库；测试全部走 mock。
+- 一木网页端的「退出登录」只清浏览器本地状态，实测**不会**让服务端 token 失效；重新扫码也不保证旧
+  token 失效。token 泄露时按账号凭据泄露处理（改密/联系官方支持），不要假设重新登录即可吊销。
+- 本仓库不含任何真实 token。
 
 ## 免责声明
 
