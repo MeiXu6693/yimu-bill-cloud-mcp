@@ -25,30 +25,43 @@
 git clone https://github.com/MeiXu6693/yimu-bill-cloud-mcp.git
 cd yimu-bill-cloud-mcp
 npm install
-npm test          # 15 个 mock 用例
+npm test          # 17 个用例（含离线工具清单）
 
 YIMU_TOKEN='<网页版 JWT>' YIMU_USER_ID='<用户ID>' node src/index.js
 ```
+
+命令行参数：
+
+| 参数 | 作用 |
+|---|---|
+| `--list-tools` | 离线输出 11 个工具及其 JSON Schema（JSON），不需要 token；供安装检查、CI 与 DSH 兼容层使用 |
+| `--version` | 打印版本后退出 |
 
 - `YIMU_TOKEN`：一木记账网页版登录后的 JWT（浏览器开发者工具里取），**不要提交到仓库**。
 - `YIMU_USER_ID`：可省略，会从 JWT 的 `aud` 推断。
 - 测试专用：`YIMU_MOCK_BASE` 可把官方域名重写到本地 mock。
 
-### DSH / MCP 客户端注册
+### 作为 MCP 服务注册（Claude Desktop、其他 MCP 客户端）
 
-```yaml
-- id: mcp-yimu-bill-cloud
-  name: '@deepseek-ai/dsh-mcp-client'
-  config:
-    serverName: yimu_cloud
-    transport: stdio
-    command: node
-    cwd: '<path-to-repo>'
-    args: ['<path-to-repo>/src/index.js']
-    env:
-      YIMU_TOKEN: '<网页版 JWT>'
-      YIMU_USER_ID: '<用户ID>'
+```json
+{
+  "mcpServers": {
+    "yimu_cloud": {
+      "command": "node",
+      "args": ["<path-to-repo>/src/index.js"],
+      "cwd": "<path-to-repo>",
+      "env": { "YIMU_TOKEN": "<网页版 JWT>" }
+    }
+  }
+}
 ```
+
+### DSH 宿主
+
+DSH 侧不使用 `@deepseek-ai/dsh-mcp-client`，也不走 `mcpManager`：由
+[`dsh-yimu-bill`](https://github.com/MeiXu6693/dsh-yimu-bill) 插件作为**私有 MCP 宿主**
+（兼容层）在「记账模式」的会话作用域内拉起本服务，并把工具映射成原生 DSH 工具。
+插件设置页负责扫码登录与凭据写入，token 只出现在子进程环境变量里。
 
 ## 工具（11 个）
 
