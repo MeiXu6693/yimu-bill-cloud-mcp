@@ -16,6 +16,21 @@ export const client = new YimuClient({
   fetchImpl,
 });
 
+/** 登录成功后把 vendor client 的 token/userId 同步给工具层。 */
+export function syncConfigFromClient() {
+  CONFIG.token = client.token;
+  CONFIG.userId = client.userId;
+}
+
+/** 清除内存登录态（auth store 由 tools/auth.js 负责删除）。 */
+export function clearAuth() {
+  client.token = "";
+  client.userToken = "";
+  client.userId = "";
+  CONFIG.token = "";
+  CONFIG.userId = "";
+}
+
 // 瞬时失败自动重试：网络错误/超时/HTTP 5xx；写请求额外重试 code=1（服务端偶发）。
 // 重试耗尽后抛出“人话”错误，不把底层 code/堆栈暴露给模型与用户；YIMU_DEBUG=1 才写 stderr。
 const RETRY_ATTEMPTS = Math.max(1, Number(process.env.YIMU_RETRY_ATTEMPTS || 3));
@@ -39,6 +54,9 @@ function friendlyError(kind) {
 
 const originalRequest = client.request.bind(client);
 client.request = async (method, path, opts = {}) => {
+  if (!client.token && !/^\/scanLogin\//.test(path)) {
+    throw new YimuError("尚未登录，请先调用 login_start 扫码");
+  }
   let lastError;
   for (let attempt = 1; attempt <= RETRY_ATTEMPTS; attempt += 1) {
     try {

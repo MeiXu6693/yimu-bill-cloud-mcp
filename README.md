@@ -25,23 +25,28 @@
 git clone https://github.com/MeiXu6693/yimu-bill-cloud-mcp.git
 cd yimu-bill-cloud-mcp
 npm install
-npm test          # 19 个用例（含离线工具清单与 CLI）
+npm test          # 24 个用例（含离线清单、独立登录与持久化）
 
-YIMU_TOKEN='<网页版 JWT>' YIMU_USER_ID='<用户ID>' node src/index.js
+node src/index.js
 ```
+
+首次使用：在 MCP 客户端里调用 `login_start`，用一木记账 App 扫描返回的二维码（图片或终端二维码）；
+扫码后调用 `login_poll`，成功后直接使用 11 个业务工具。登录态由 MCP 自动保存，之后启动不需要重新扫码；
+`logout` 清除本机登录态。
 
 命令行参数：
 
 | 参数 | 作用 |
 |---|---|
-| `--list-tools` | 离线输出 11 个工具及其 JSON Schema（JSON），不需要 token；供安装检查、CI 与 DSH 兼容层使用 |
+| `--list-tools` | 离线输出工具清单及 JSON Schema（JSON），不需要 token；无 token 时 14 个（11 业务 + 3 登录），有 `YIMU_TOKEN` 时 11 个 |
 | `--version` | 打印版本后退出 |
 | `--help` | 打印用法与环境变量说明后退出 |
 
 未知参数会打印用法并以退出码 2 结束。
 
-- `YIMU_TOKEN`：一木记账网页版登录后的 JWT（浏览器开发者工具里取），**不要提交到仓库**。
-- `YIMU_USER_ID`：可省略，会从 JWT 的 `aud` 推断。
+- `YIMU_TOKEN`：可选。已有网页版 JWT 时显式传入，跳过扫码登录（DSH、CI、headless 场景）。
+- `YIMU_USER_ID`：可选，缺省从 token 的 `aud` 推断。
+- `YIMU_STATE_DIR`：仅测试/容器隔离用，一般不需要设置。
 - 测试专用：`YIMU_MOCK_BASE` 可把官方域名重写到本地 mock。
 
 ### 作为 MCP 服务注册（Claude Desktop、其他 MCP 客户端）
@@ -52,12 +57,13 @@ YIMU_TOKEN='<网页版 JWT>' YIMU_USER_ID='<用户ID>' node src/index.js
     "yimu_cloud": {
       "command": "node",
       "args": ["<path-to-repo>/src/index.js"],
-      "cwd": "<path-to-repo>",
-      "env": { "YIMU_TOKEN": "<网页版 JWT>" }
+      "cwd": "<path-to-repo>"
     }
   }
 }
 ```
+
+不需要预先准备 token：第一次在客户端调用 `login_start`，扫码后 `login_poll`，MCP 会自动保存登录态。
 
 ### DSH 宿主
 
@@ -67,6 +73,16 @@ DSH 侧不使用 `@deepseek-ai/dsh-mcp-client`，也不走 `mcpManager`：由
 插件设置页负责扫码登录与凭据写入，token 只出现在子进程环境变量里。
 
 ## 工具（11 个）
+
+### 登录（仅独立无 token 时）
+
+| 工具 | 作用 |
+|---|---|
+| `login_start` | 生成扫码二维码（图片 + 终端二维码）；首次使用或需要重新登录时调用 |
+| `login_poll` | 轮询扫码结果；成功后自动保存登录态 |
+| `logout` | 清除本机登录态；服务端 token 仍有效 |
+
+DSH 插件模式由插件注入 `YIMU_TOKEN`，不会注册这 3 个工具。
 
 ### 一级（高频）
 
@@ -116,8 +132,9 @@ DSH 侧不使用 `@deepseek-ai/dsh-mcp-client`，也不走 `mcpManager`：由
 ```
 src/index.js          bin：参数解析 + stdio 启动
 src/version.js        版本唯一来源（读 package.json）
-src/server.js         注册 11 个工具
-src/config.js         env 配置（token/userId）
+src/server.js         注册 11 个业务工具（独立无 token 时再加 3 个登录工具）
+src/config.js         env 配置，或加载本机保存的登录态
+src/auth-store.js     独立登录态读写（0600）
 src/client.js         官方 API 薄封装 + 瞬时失败重试
 src/taxonomy.js       名称↔ID、内置分类默认表
 src/cache.js          快照缓存/失效
@@ -125,7 +142,7 @@ src/view.js           查询/统计/概览/账户/流水/预算视图
 src/write.js          语义写入（账单/转账/退款/余额）
 src/validate.js       payload 校验
 src/balance.js        Δ 引擎
-src/tools/            一级工具（read_top/bill_write/transfer）与 grouped（report/admin）
+src/tools/            一级工具、grouped，以及 auth（登录）
 vendor/               上游 MIT 代码 + LICENSE
 test/                 mock API + 用例
 ```
@@ -140,10 +157,14 @@ test/                 mock API + 用例
 
 ## 安全
 
-- `YIMU_TOKEN` 只放环境变量或本地配置，不进仓库；测试全部走 mock。
+- 独立 MCP 在首次扫码登录后，把登录态保存在 `$XDG_STATE_HOME/yimu-bill-cloud-mcp/auth.json`
+  （默认 `~/.local/state/yimu-bill-cloud-mcp/auth.json`），目录 0700、文件 0600；同 OS 用户可读。
+- **保存的是 token，不是密码**。一木网页端的「记住密码」是浏览器本地行为（且密钥在前端包里），
+  本 MCP 不复刻；需要跳过扫码时用 `YIMU_TOKEN` 显式传入。
 - 一木网页端的「退出登录」只清浏览器本地状态，实测**不会**让服务端 token 失效；重新扫码也不保证旧
   token 失效。token 泄露时按账号凭据泄露处理（改密/联系官方支持），不要假设重新登录即可吊销。
-- 本仓库不含任何真实 token。
+- DSH 插件模式由 DSH 凭据库管理登录态，不读取/写入上述 auth store。
+- 本仓库不含任何真实 token；测试全部走 mock。
 
 ## 免责声明
 

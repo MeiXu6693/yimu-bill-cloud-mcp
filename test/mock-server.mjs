@@ -36,6 +36,7 @@ export function createMock() {
     stockAssets: [],
     assetIncome: [],
     inject: null,   // 测试用：{path, times, code?, httpStatus?} 模拟瞬时失败
+    scanPolls: 0,   // 扫码状态轮询次数
   };
   const month = (() => { const d = new Date(Date.now() + TZ); return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`; })();
   const seed = (over) => ({
@@ -71,6 +72,19 @@ export function createMock() {
           return res.end(JSON.stringify({ code: state.inject.httpStatus, msg: "injected" }));
         }
         return envelope(res, state.inject.code === undefined ? 1 : state.inject.code, null, "injected");
+      }
+      // 扫码登录：第一次 pending，第二次成功（带顶层 token）
+      if (path === "/scanLogin/addScanLogin") return envelope(res, 0, "scan-session-1");
+      if (path.startsWith("/scanLogin/getScanLogin/")) {
+        state.scanPolls += 1;
+        if (state.scanPolls === 1) return envelope(res, 1, null, "no data");
+        res.writeHead(200, { "content-type": "application/json" });
+        return res.end(JSON.stringify({
+          code: 0,
+          msg: "success",
+          result: { id: 1469378, name: "测试用户", email: "test@example.com" },
+          token: "jwt-test-token",
+        }));
       }
       // 读：资产
       if (path.startsWith("/asset/getAsset/")) return envelope(res, 0, state.assets);

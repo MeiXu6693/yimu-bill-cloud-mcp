@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-// 一木记账云端 MCP（自研）：stdio 传输，token/userId 从环境变量读取。
+// 一木记账云端 MCP（自研）：stdio 传输。token 优先来自 YIMU_TOKEN，
+// 否则使用本机保存的登录态（独立模式下由 login_start 扫码建立）。
 //
 // --list-tools  离线列出工具清单（JSON）后退出，不需要 YIMU_TOKEN；
 //               供 DSH 兼容层、安装检查与 CI 使用。
 // --version / --help 打印后退出；未知参数明确报错。
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { assertConfig } from "./config.js";
+import { CONFIG } from "./config.js";
 import { createServer } from "./server.js";
 import { VERSION } from "./version.js";
 
@@ -14,13 +15,14 @@ const USAGE = `用法: yimu-bill-cloud-mcp [选项]
 选项:
   --help, -h       显示本帮助后退出
   --version, -v    显示版本后退出
-  --list-tools     离线输出 11 个工具及 JSON Schema 后退出（不需要 token）
+  --list-tools     离线输出工具清单及 JSON Schema 后退出（不需要 token）
 
 不带选项时以 stdio 运行 MCP 服务。
 
 环境变量:
-  YIMU_TOKEN       必需。一木记账网页版 JWT。
-  YIMU_USER_ID     可选。缺省时从 JWT 的 aud 推导。
+  YIMU_TOKEN       可选。已配置时直接使用 token 并跳过扫码登录；
+                   未配置时由 login_start 管理登录态并自动保存。
+  YIMU_USER_ID     可选。缺省时从 token 的 aud 推导。
   YIMU_TIMEOUT_MS  可选。上游请求超时，默认 30000。
 `;
 
@@ -86,15 +88,13 @@ async function main(argv) {
     process.stderr.write(`[yimu-bill-cloud] 未知参数: ${unknown.join(" ")}\n${USAGE}`);
     return 2;
   }
-  try {
-    assertConfig();
-  } catch (error) {
-    process.stderr.write(`[yimu-bill-cloud] ${error.message}\n`);
-    return 1;
-  }
   const server = createServer();
   await server.connect(new StdioServerTransport());
-  process.stderr.write("[yimu-bill-cloud] ready\n");
+  process.stderr.write(
+    CONFIG.token
+      ? "[yimu-bill-cloud] ready\n"
+      : "[yimu-bill-cloud] ready（未登录，可调用 login_start）\n",
+  );
   return undefined;
 }
 
