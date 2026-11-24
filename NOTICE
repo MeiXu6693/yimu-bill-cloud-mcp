@@ -1,11 +1,29 @@
 yimu-cloud-mcp
-=============
+==============
 
-本仓库是 @powercess/yimu-mcp v0.2.0 的 fork（上游 MIT，见 vendor/LICENSE）。
+本仓库是 @powercess/yimu-mcp v0.2.0 的 fork。上游以 MIT 许可证发布，
+完整许可证原文见 vendor/LICENSE（Copyright (c) 2026 powercess）。
 
-- 保留/复用的上游文件：vendor/api.js、vendor/crypto.js
-- 上游仓库：https://github.com/powercess/yimu-mcp
-- 主要修改：工具收敛为 11 个（高频一级 + report/admin 分组）、语义化写入、
-  自动资产余额校正、App 对等查询/统计/流水、瞬时失败重试、mock 测试。
+上游
+----
+- 仓库：https://github.com/powercess/yimu-mcp
+- 版本：v0.2.0（commit b5d0aed）
+- 许可证：MIT
 
-上游版权归其作者所有；新增与修改代码同样以 MIT 发布，见 LICENSE。
+复用的上游文件
+--------------
+- vendor/api.js    — 改编自上游 src/api.ts（仅去除 TypeScript 类型标注）
+- vendor/crypto.js — 改编自上游 src/crypto.ts（仅去除 TypeScript 类型标注）
+
+两个文件均保留 SPDX 标识与来源说明。按 MIT 许可证要求，上游的版权声明与
+许可声明（vendor/LICENSE）随源码一并分发，未被移除或替换。
+
+本仓库的修改
+------------
+- 工具收敛为 11 个（高频一级工具 + report/admin 分组）
+- 语义化写入、自动资产余额校正
+- App 对等查询/统计/流水
+- 瞬时失败自动重试
+- mock 测试（test/）
+
+新增与修改代码同样以 MIT 发布，版权声明见 LICENSE。

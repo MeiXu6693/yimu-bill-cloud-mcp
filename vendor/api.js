@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: MIT
+// 上游代码：@powercess/yimu-mcp v0.2.0（commit b5d0aed，https://github.com/powercess/yimu-mcp），
+// 改编自上游 src/api.ts（仅去除 TypeScript 类型标注）。版权 (c) 2026 powercess，见同目录 LICENSE。
+//
 // 一木记账 API 客户端。
 //
 // 响应信封 {code, msg, result}（部分接口兼容 data）：
