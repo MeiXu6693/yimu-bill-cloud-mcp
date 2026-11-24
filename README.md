@@ -153,7 +153,8 @@ test/                 mock API + 用例
 - 打 tag 并推送：`git tag -a vX.Y.Z -m "..." && git push origin vX.Y.Z`。
 - tag 触发 [`.github/workflows/release.yml`](.github/workflows/release.yml)：测试 → 版本校验 →
   GitHub Release（优先 `release-notes/<tag>.md`）。
-- 可选 npm：仓库 Secrets 配置 `NPM_TOKEN` 后自动 `npm publish`；未配置则跳过。
+- 可选 npm：仓库 Secrets 配置 `NPM_TOKEN`（stage-only 即可）后，workflow 执行 `npm stage publish`；未配置则跳过。
+  staged 版本需维护者在 npm 上用 2FA 批准后才公开（本版已发布 `yimu-bill-cloud-mcp@0.2.0`）。
 
 ## 安全
 
