@@ -1,0 +1,11 @@
+yimu-cloud-mcp
+=============
+
+本仓库是 @powercess/yimu-mcp v0.2.0 的 fork（上游 MIT，见 vendor/LICENSE）。
+
+- 保留/复用的上游文件：vendor/api.js、vendor/crypto.js
+- 上游仓库：https://github.com/powercess/yimu-mcp
+- 主要修改：工具收敛为 11 个（高频一级 + report/admin 分组）、语义化写入、
+  自动资产余额校正、App 对等查询/统计/流水、瞬时失败重试、mock 测试。
+
+上游版权归其作者所有；新增与修改代码同样以 MIT 发布，见 LICENSE。

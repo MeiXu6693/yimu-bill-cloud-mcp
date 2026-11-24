@@ -1,0 +1,21 @@
+{
+  "name": "yimu-cloud-mcp",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "一木记账云端 MCP（fork）：语义化读写、自动余额、App 对等查询",
+  "bin": {
+    "yimu-cloud-mcp": "src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test test/tools.test.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.23.8"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  }
+}

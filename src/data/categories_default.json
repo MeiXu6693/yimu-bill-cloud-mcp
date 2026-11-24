@@ -1,0 +1,453 @@
+{
+ "source": "yimubill web bundle index-C6JQXa0P.js (2026-11-24)",
+ "parents": [
+  {
+   "id": 1,
+   "name": "健康医疗",
+   "icon": "ic_parent_medical"
+  },
+  {
+   "id": 2,
+   "name": "送礼人情",
+   "icon": "ic_parent_gift"
+  },
+  {
+   "id": 3,
+   "name": "文化教育",
+   "icon": "ic_parent_education"
+  },
+  {
+   "id": 4,
+   "name": "居家生活",
+   "icon": "ic_parent_home"
+  },
+  {
+   "id": 5,
+   "name": "休闲娱乐",
+   "icon": "ic_parent_game"
+  },
+  {
+   "id": 6,
+   "name": "出行交通",
+   "icon": "ic_parent_traffic"
+  },
+  {
+   "id": 7,
+   "name": "食品餐饮",
+   "icon": "ic_parent_restaurant"
+  },
+  {
+   "id": 8,
+   "name": "购物消费",
+   "icon": "ic_parent_shopping"
+  },
+  {
+   "id": 9,
+   "name": "收入",
+   "icon": "ic_income"
+  },
+  {
+   "id": 99,
+   "name": "其他",
+   "icon": "ic_other"
+  }
+ ],
+ "children": [
+  {
+   "id": 101,
+   "name": "买药",
+   "parent_id": 1,
+   "icon": "ic_medical_medicine"
+  },
+  {
+   "id": 102,
+   "name": "医院",
+   "parent_id": 1,
+   "icon": "ic_medical_hospital"
+  },
+  {
+   "id": 103,
+   "name": "滋补保健",
+   "parent_id": 1,
+   "icon": "ic_medical_healthcare"
+  },
+  {
+   "id": 201,
+   "name": "打赏",
+   "parent_id": 2,
+   "icon": "ic_gift_reward"
+  },
+  {
+   "id": 202,
+   "name": "红包",
+   "parent_id": 2,
+   "icon": "ic_gift_red_paper"
+  },
+  {
+   "id": 203,
+   "name": "借出",
+   "parent_id": 2,
+   "icon": "ic_gift_lend"
+  },
+  {
+   "id": 204,
+   "name": "礼物",
+   "parent_id": 2,
+   "icon": "ic_gift_gift"
+  },
+  {
+   "id": 205,
+   "name": "孝敬长辈",
+   "parent_id": 2,
+   "icon": "ic_gift_filial_piety"
+  },
+  {
+   "id": 301,
+   "name": "培训考试",
+   "parent_id": 3,
+   "icon": "ic_education_train"
+  },
+  {
+   "id": 302,
+   "name": "书报杂志",
+   "parent_id": 3,
+   "icon": "ic_education_book"
+  },
+  {
+   "id": 303,
+   "name": "学费",
+   "parent_id": 3,
+   "icon": "ic_education_tuition"
+  },
+  {
+   "id": 401,
+   "name": "家政清洁",
+   "parent_id": 4,
+   "icon": "ic_home_husekeeping"
+  },
+  {
+   "id": 402,
+   "name": "车位费",
+   "parent_id": 4,
+   "icon": "ic_home_parking_lot"
+  },
+  {
+   "id": 403,
+   "name": "房租还贷",
+   "parent_id": 4,
+   "icon": "ic_home_loan"
+  },
+  {
+   "id": 404,
+   "name": "物业费",
+   "parent_id": 4,
+   "icon": "ic_home_property"
+  },
+  {
+   "id": 405,
+   "name": "燃气费",
+   "parent_id": 4,
+   "icon": "ic_home_gas"
+  },
+  {
+   "id": 406,
+   "name": "水费",
+   "parent_id": 4,
+   "icon": "ic_home_water"
+  },
+  {
+   "id": 407,
+   "name": "电费",
+   "parent_id": 4,
+   "icon": "ic_home_electricity_fees"
+  },
+  {
+   "id": 408,
+   "name": "话费宽带",
+   "parent_id": 4,
+   "icon": "ic_home_telephone_bill"
+  },
+  {
+   "id": 501,
+   "name": "演出",
+   "parent_id": 5,
+   "icon": "ic_game_show"
+  },
+  {
+   "id": 502,
+   "name": "酒吧",
+   "parent_id": 5,
+   "icon": "ic_game_bar"
+  },
+  {
+   "id": 503,
+   "name": "棋牌桌游",
+   "parent_id": 5,
+   "icon": "ic_game_chess"
+  },
+  {
+   "id": 504,
+   "name": "足浴按摩",
+   "parent_id": 5,
+   "icon": "ic_game_foot_bath"
+  },
+  {
+   "id": 505,
+   "name": "运动健身",
+   "parent_id": 5,
+   "icon": "ic_game_keep_fit"
+  },
+  {
+   "id": 506,
+   "name": "电影唱歌",
+   "parent_id": 5,
+   "icon": "ic_game_film"
+  },
+  {
+   "id": 507,
+   "name": "旅游度假",
+   "parent_id": 5,
+   "icon": "ic_game_travel"
+  },
+  {
+   "id": 601,
+   "name": "保养修车",
+   "parent_id": 6,
+   "icon": "ic_traffic_maintain"
+  },
+  {
+   "id": 602,
+   "name": "飞机",
+   "parent_id": 6,
+   "icon": "ic_traffic_aircraft"
+  },
+  {
+   "id": 603,
+   "name": "火车",
+   "parent_id": 6,
+   "icon": "ic_traffic_train"
+  },
+  {
+   "id": 604,
+   "name": "加油",
+   "parent_id": 6,
+   "icon": "ic_traffic_oil"
+  },
+  {
+   "id": 605,
+   "name": "停车费",
+   "parent_id": 6,
+   "icon": "ic_traffic_parking"
+  },
+  {
+   "id": 606,
+   "name": "公共交通",
+   "parent_id": 6,
+   "icon": "ic_traffic_bus"
+  },
+  {
+   "id": 607,
+   "name": "打车",
+   "parent_id": 6,
+   "icon": "ic_traffic_taxi"
+  },
+  {
+   "id": 701,
+   "name": "粮油调味",
+   "parent_id": 7,
+   "icon": "ic_restaurant_foodstuff"
+  },
+  {
+   "id": 702,
+   "name": "请客吃饭",
+   "parent_id": 7,
+   "icon": "ic_restaurant_treat"
+  },
+  {
+   "id": 703,
+   "name": "生鲜食品",
+   "parent_id": 7,
+   "icon": "ic_restaurant_fresh"
+  },
+  {
+   "id": 704,
+   "name": "休闲零食",
+   "parent_id": 7,
+   "icon": "ic_restaurant_snacks"
+  },
+  {
+   "id": 705,
+   "name": "饮料酒水",
+   "parent_id": 7,
+   "icon": "ic_restaurant_wine"
+  },
+  {
+   "id": 706,
+   "name": "晚餐",
+   "parent_id": 7,
+   "icon": "ic_restaurant_dinner"
+  },
+  {
+   "id": 707,
+   "name": "午餐",
+   "parent_id": 7,
+   "icon": "ic_restaurant_lunch"
+  },
+  {
+   "id": 708,
+   "name": "早餐",
+   "parent_id": 7,
+   "icon": "ic_restaurant_breakfast"
+  },
+  {
+   "id": 801,
+   "name": "装修装饰",
+   "parent_id": 8,
+   "icon": "ic_shopping_renovation"
+  },
+  {
+   "id": 802,
+   "name": "办公用品",
+   "parent_id": 8,
+   "icon": "ic_shopping_office"
+  },
+  {
+   "id": 803,
+   "name": "宠物用品",
+   "parent_id": 8,
+   "icon": "ic_shopping_pets"
+  },
+  {
+   "id": 804,
+   "name": "服饰运动",
+   "parent_id": 8,
+   "icon": "ic_shopping_motion"
+  },
+  {
+   "id": 805,
+   "name": "母婴玩具",
+   "parent_id": 8,
+   "icon": "ic_shopping_baby"
+  },
+  {
+   "id": 806,
+   "name": "配饰腕表",
+   "parent_id": 8,
+   "icon": "ic_shopping_watch"
+  },
+  {
+   "id": 807,
+   "name": "生活电器",
+   "parent_id": 8,
+   "icon": "ic_shopping_electric"
+  },
+  {
+   "id": 808,
+   "name": "虚拟充值",
+   "parent_id": 8,
+   "icon": "ic_shopping_recharge"
+  },
+  {
+   "id": 809,
+   "name": "手机数码",
+   "parent_id": 8,
+   "icon": "ic_shopping_phone"
+  },
+  {
+   "id": 810,
+   "name": "个护美妆",
+   "parent_id": 8,
+   "icon": "ic_shopping_makeup"
+  },
+  {
+   "id": 811,
+   "name": "日常家居",
+   "parent_id": 8,
+   "icon": "ic_shopping_home"
+  },
+  {
+   "id": 901,
+   "name": "报销",
+   "parent_id": 9,
+   "icon": "ic_income_reimbursement"
+  },
+  {
+   "id": 902,
+   "name": "补贴",
+   "parent_id": 9,
+   "icon": "ic_income_subsidy"
+  },
+  {
+   "id": 903,
+   "name": "二手闲置",
+   "parent_id": 9,
+   "icon": "ic_income_second_hand"
+  },
+  {
+   "id": 904,
+   "name": "工资",
+   "parent_id": 9,
+   "icon": "ic_income_wages"
+  },
+  {
+   "id": 905,
+   "name": "兼职外快",
+   "parent_id": 9,
+   "icon": "ic_income_part_time_job"
+  },
+  {
+   "id": 906,
+   "name": "奖金",
+   "parent_id": 9,
+   "icon": "ic_income_bonus"
+  },
+  {
+   "id": 907,
+   "name": "借入",
+   "parent_id": 9,
+   "icon": "ic_income_borrow"
+  },
+  {
+   "id": 908,
+   "name": "礼金人情",
+   "parent_id": 9,
+   "icon": "ic_income_cash_gift"
+  },
+  {
+   "id": 909,
+   "name": "理财盈利",
+   "parent_id": 9,
+   "icon": "ic_income_manager_money"
+  },
+  {
+   "id": 910,
+   "name": "中奖",
+   "parent_id": 9,
+   "icon": "ic_income_winning"
+  },
+  {
+   "id": 911,
+   "name": "其他",
+   "parent_id": 9,
+   "icon": "ic_income_other"
+  },
+  {
+   "id": 9901,
+   "name": "慈善捐助",
+   "parent_id": 99,
+   "icon": "ic_other_charitable"
+  },
+  {
+   "id": 9902,
+   "name": "理财支出",
+   "parent_id": 99,
+   "icon": "ic_r_manager_money"
+  },
+  {
+   "id": 9903,
+   "name": "罚款赔偿",
+   "parent_id": 99,
+   "icon": "ic_other_fine"
+  }
+ ]
+}
