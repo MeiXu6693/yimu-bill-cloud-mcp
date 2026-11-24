@@ -4,6 +4,8 @@
 
 > Fork 自 [`@powercess/yimu-mcp`](https://github.com/powercess/yimu-mcp) v0.2.0（MIT），
 > 复用了 `vendor/api.js`、`vendor/crypto.js`，在其上补齐语义化写入、自动余额、App 对等查询与重试。见 `NOTICE`。
+>
+> 非官方项目，与一木记账官方无关联；接口来自其公开网页端，升级或调整后可能失效。
 
 ## 特性
 
@@ -18,6 +20,8 @@
 要求 Node.js >= 22。
 
 ```bash
+git clone https://github.com/MeiXu6693/yimu-cloud-mcp.git
+cd yimu-cloud-mcp
 npm install
 npm test          # 15 个 mock 用例
 
@@ -111,6 +115,17 @@ test/                 mock API + 用例
 - `YIMU_TOKEN` 只放环境变量或本地配置，不进仓库；泄露后请重新登录网页版使其失效。
 - 本仓库不含任何真实 token；测试全部走 mock。
 
-## License
+## 免责声明
 
-MIT。上游代码版权归 `@powercess/yimu-mcp` 作者；本 fork 的修改同样以 MIT 发布。详见 `LICENSE`、`NOTICE`、`vendor/LICENSE`。
+非官方项目，与一木记账官方无关联。`vendor/` 下的 API 客户端来自社区项目
+[`@powercess/yimu-mcp`](https://github.com/powercess/yimu-mcp)，接口若变更可能随时失效；
+写入类工具会真实改动账本，请自行备份并在小范围试跑后再全量使用。
+
+## 致谢与授权
+
+- 上游：[`@powercess/yimu-mcp`](https://github.com/powercess/yimu-mcp) v0.2.0，MIT，
+  Copyright (c) 2026 powercess。
+- 本仓库复用的上游代码保存在 `vendor/`，其许可证原文见 `vendor/LICENSE`，来源与改动说明见 `NOTICE`；
+  上游版权声明与许可声明随源码一并分发。
+- 本 fork 新增与修改的代码同样以 MIT 发布，见 `LICENSE`。
+

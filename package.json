@@ -3,6 +3,23 @@
   "version": "0.1.0",
   "type": "module",
   "description": "一木记账云端 MCP（fork）：语义化读写、自动余额、App 对等查询",
+  "author": "MeiXu6693",
+  "keywords": [
+    "mcp",
+    "modelcontextprotocol",
+    "yimu",
+    "yimubill",
+    "bookkeeping",
+    "accounting"
+  ],
+  "homepage": "https://github.com/MeiXu6693/yimu-cloud-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MeiXu6693/yimu-cloud-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MeiXu6693/yimu-cloud-mcp/issues"
+  },
   "bin": {
     "yimu-cloud-mcp": "src/index.js"
   },
