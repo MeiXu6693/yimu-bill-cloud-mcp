@@ -7,11 +7,11 @@ import { createServer } from "./server.js";
 try {
   assertConfig();
 } catch (e) {
-  process.stderr.write(`[yimu-cloud] ${e.message}\n`);
+  process.stderr.write(`[yimu-bill-cloud] ${e.message}\n`);
   process.exit(1);
 }
 
 const server = createServer();
 const transport = new StdioServerTransport();
 await server.connect(transport);
-process.stderr.write("[yimu-cloud] ready\n");
+process.stderr.write("[yimu-bill-cloud] ready\n");

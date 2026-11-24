@@ -1,4 +1,4 @@
-# yimu-cloud-mcp
+# yimu-bill-cloud-mcp
 
 一木记账（yimubill.com）云端 MCP：把网页版 API 封装成 **11 个语义化工具**，供 AI Agent 记账、查询与对账。
 
@@ -6,6 +6,8 @@
 > 复用了 `vendor/api.js`、`vendor/crypto.js`，在其上补齐语义化写入、自动余额、App 对等查询与重试。见 `NOTICE`。
 >
 > 非官方项目，与一木记账官方无关联；接口来自其公开网页端，升级或调整后可能失效。
+>
+> 这是 MCP 协议层；DSH 宿主侧的扫码登录插件见 [`MeiXu6693/dsh-yimu-bill`](https://github.com/MeiXu6693/dsh-yimu-bill)。
 
 ## 特性
 
@@ -20,8 +22,8 @@
 要求 Node.js >= 22。
 
 ```bash
-git clone https://github.com/MeiXu6693/yimu-cloud-mcp.git
-cd yimu-cloud-mcp
+git clone https://github.com/MeiXu6693/yimu-bill-cloud-mcp.git
+cd yimu-bill-cloud-mcp
 npm install
 npm test          # 15 个 mock 用例
 
@@ -35,12 +37,13 @@ YIMU_TOKEN='<网页版 JWT>' YIMU_USER_ID='<用户ID>' node src/index.js
 ### DSH / MCP 客户端注册
 
 ```yaml
-- id: mcp-yimu-cloud
+- id: mcp-yimu-bill-cloud
   name: '@deepseek-ai/dsh-mcp-client'
   config:
-    serverName: yimu-cloud
+    serverName: yimu_cloud
     transport: stdio
     command: node
+    cwd: '<path-to-repo>'
     args: ['<path-to-repo>/src/index.js']
     env:
       YIMU_TOKEN: '<网页版 JWT>'

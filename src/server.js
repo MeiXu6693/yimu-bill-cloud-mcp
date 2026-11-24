@@ -6,7 +6,7 @@ import { registerReportTools } from "./tools/grouped/report.js";
 import { registerAdminTools } from "./tools/grouped/admin.js";
 
 export function createServer() {
-  const server = new McpServer({ name: "yimu-cloud", version: "0.1.0" });
+  const server = new McpServer({ name: "yimu-bill-cloud", version: "0.1.1" });
   registerReadTools(server);
   registerBillTools(server);
   registerTransferTools(server);

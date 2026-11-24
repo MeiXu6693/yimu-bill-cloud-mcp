@@ -49,7 +49,7 @@ client.request = async (method, path, opts = {}) => {
       if (!kind) throw e;
       if (attempt >= RETRY_ATTEMPTS) throw friendlyError(kind);
       if (process.env.YIMU_DEBUG === "1") {
-        process.stderr.write(`[yimu-cloud] retry ${attempt}/${RETRY_ATTEMPTS} ${method} ${path}: ${e.message}\n`);
+        process.stderr.write(`[yimu-bill-cloud] retry ${attempt}/${RETRY_ATTEMPTS} ${method} ${path}: ${e.message}\n`);
       }
       await sleep(RETRY_DELAY_MS * attempt);
     }
