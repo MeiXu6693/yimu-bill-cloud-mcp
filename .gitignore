@@ -4,3 +4,6 @@ node_modules/
 .DS_Store
 coverage/
 tmp/
+
+# CI 标记（app-version 的 actions/cache 落盘）
+.ci/

@@ -1,0 +1,143 @@
+name: app-version
+
+# 跟随一木记账 App 的版本更新，对云端 MCP 做自动化测试。
+#
+# 触发方式：
+#   - schedule：每 6 小时查一次 iOS App Store 与腾讯应用宝的版本；
+#   - workflow_dispatch：手动重跑（可选 force 忽略已测标记）；
+#   - push：改动本 workflow、版本探测脚本或 live 测试时立即验证一次。
+#
+# 版本没变时用 actions/cache 标记跳过；变了才跑测试。标记带 live/anon 后缀：
+# 配置 YIMU_TOKEN secret 后，同一版本会自动从匿名模式升级为登录态只读测试。
+# 测试失败不写标记，下一次 schedule 会继续重试，直到修复。
+
+on:
+  schedule:
+    - cron: '43 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: '已测过的版本也重跑'
+        type: boolean
+        required: false
+        default: false
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/app-version.yml'
+      - 'scripts/detect-app-version.mjs'
+      - 'test/live.test.mjs'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: app-version
+  cancel-in-progress: false
+
+jobs:
+  detect:
+    name: detect app version
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      ios: ${{ steps.versions.outputs.ios_version }}
+      android: ${{ steps.versions.outputs.android_version }}
+      key: ${{ steps.versions.outputs.key }}
+      mode: ${{ steps.mode.outputs.mode }}
+      tested: ${{ steps.seen.outputs.cache-hit }}
+      skip: ${{ steps.decide.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Read the newest iOS and Android versions
+        id: versions
+        run: node scripts/detect-app-version.mjs
+
+      - name: Pick the test mode from the token secret
+        id: mode
+        env:
+          YIMU_TOKEN: ${{ secrets.YIMU_TOKEN }}
+        run: |
+          if [ -n "${YIMU_TOKEN}" ]; then
+            echo 'mode=live' >> "${GITHUB_OUTPUT}"
+          else
+            echo 'mode=anon' >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Restore the tested marker
+        id: seen
+        uses: actions/cache/restore@v4
+        with:
+          path: .ci/app-version-tested
+          key: yimu-app-${{ steps.versions.outputs.key }}-${{ steps.mode.outputs.mode }}
+          lookup-only: true
+
+      - name: Decide whether to test
+        id: decide
+        env:
+          CACHE_HIT: ${{ steps.seen.outputs.cache-hit }}
+          FORCE: ${{ inputs.force }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "${EVENT}" = "push" ] || [ "${FORCE}" = "true" ]; then
+            echo 'skip=false' >> "${GITHUB_OUTPUT}"
+            echo 'running: push or forced' >> "${GITHUB_STEP_SUMMARY}"
+          elif [ "${CACHE_HIT}" = "true" ]; then
+            echo 'skip=true' >> "${GITHUB_OUTPUT}"
+            echo "already tested: \`${{ steps.versions.outputs.key }}\` (${{ steps.mode.outputs.mode }})" >> "${GITHUB_STEP_SUMMARY}"
+          else
+            echo 'skip=false' >> "${GITHUB_OUTPUT}"
+            echo 'new app version: running the compatibility suite' >> "${GITHUB_STEP_SUMMARY}"
+          fi
+
+  test:
+    name: mock and live tests
+    needs: detect
+    if: needs.detect.outputs.skip != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Contract tests against the mock API
+        run: npm test
+
+      - name: Live tests against the official cloud API
+        env:
+          YIMU_TOKEN: ${{ secrets.YIMU_TOKEN }}
+        run: |
+          if [ -z "${YIMU_TOKEN}" ]; then
+            echo '::warning::未配置 YIMU_TOKEN secret：只跑匿名扫码接口，跳过登录态只读工具。'
+            echo '未配置 `YIMU_TOKEN`：跳过登录态只读测试（匿名扫码接口仍已覆盖）。' >> "${GITHUB_STEP_SUMMARY}"
+          else
+            echo '已配置 `YIMU_TOKEN`：运行登录态只读测试。' >> "${GITHUB_STEP_SUMMARY}"
+          fi
+          npm run test:live
+
+      - name: Record the tested app version
+        run: |
+          mkdir -p .ci
+          printf 'ios=%s\nandroid=%s\nmode=%s\n' \
+            '${{ needs.detect.outputs.ios }}' \
+            '${{ needs.detect.outputs.android }}' \
+            '${{ needs.detect.outputs.mode }}' > .ci/app-version-tested
+
+      - name: Remember this app version as tested
+        if: needs.detect.outputs.tested != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .ci/app-version-tested
+          key: yimu-app-${{ needs.detect.outputs.key }}-${{ needs.detect.outputs.mode }}

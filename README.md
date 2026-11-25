@@ -1,5 +1,8 @@
 # yimu-bill-cloud-mcp
 
+[![test](https://github.com/MeiXu6693/yimu-bill-cloud-mcp/actions/workflows/test.yml/badge.svg)](https://github.com/MeiXu6693/yimu-bill-cloud-mcp/actions/workflows/test.yml)
+[![app-version](https://github.com/MeiXu6693/yimu-bill-cloud-mcp/actions/workflows/app-version.yml/badge.svg)](https://github.com/MeiXu6693/yimu-bill-cloud-mcp/actions/workflows/app-version.yml)
+
 一木记账（yimubill.com）云端 MCP：把网页版 API 封装成 **11 个语义化工具**，供 AI Agent 记账、查询与对账。
 
 > Fork 自 [`@powercess/yimu-mcp`](https://github.com/powercess/yimu-mcp) v0.2.0（MIT），
@@ -144,7 +147,8 @@ src/validate.js       payload 校验
 src/balance.js        Δ 引擎
 src/tools/            一级工具、grouped，以及 auth（登录）
 vendor/               上游 MIT 代码 + LICENSE
-test/                 mock API + 用例
+test/                 mock API + 用例；live.test.mjs 为真实接口测试
+scripts/              CI 用 App 版本探测
 ```
 
 ## 发布
@@ -155,6 +159,33 @@ test/                 mock API + 用例
   GitHub Release（优先 `release-notes/<tag>.md`）。
 - 可选 npm：仓库 Secrets 配置 `NPM_TOKEN`（stage-only 即可）后，workflow 执行 `npm stage publish`；未配置则跳过。
   staged 版本需维护者在 npm 上用 2FA 批准后才公开（本版已发布 `yimu-bill-cloud-mcp@0.2.0`）。
+
+## CI：跟随一木记账 App 版本
+
+| Workflow | 触发 | 内容 |
+|---|---|---|
+| [`test.yml`](.github/workflows/test.yml) | push / PR | Node 22/24 的 mock 契约测试 + 打包白名单 |
+| [`app-version.yml`](.github/workflows/app-version.yml) | 每 6 小时 / 手动 / 探测脚本变更 | 检测 App Store 与应用宝版本，版本变化时跑 mock + 真实接口测试 |
+
+版本探测不需要密钥：iOS 读 Apple App Store lookup，Android 读腾讯应用宝（小米应用商店兜底）；
+任一平台取不到版本会让 workflow 变红，避免版本信号悄悄丢失。版本没变时用 actions/cache 跳过测试，
+变了才跑：
+
+- **匿名扫码**（始终执行）：启动真实 MCP 子进程，调用 `login_start` / `login_poll`，验证官方信封、
+  二维码 PNG 与 pending 状态；
+- **登录态只读**（配置 `YIMU_TOKEN` secret 后执行）：`overview` / `accounts` / `query_bills` / `stats`，
+  只读、不写账单（写入路径由 mock 契约测试覆盖，避免 CI 改动真实账本）。未配置时给出 warning 并跳过，
+  匿名部分照常运行；配置后同一版本会自动补跑一次（缓存 key 区分 `live` / `anon`）。
+
+手动重跑：Actions → **app-version** → *Run workflow*（勾选 force 忽略已测标记）。本地：
+
+```bash
+YIMU_LIVE=1 npm run test:live                 # 匿名扫码接口
+YIMU_TOKEN=<JWT> YIMU_LIVE=1 npm run test:live # 追加登录态只读测试
+```
+
+> `YIMU_TOKEN` 与独立 MCP 的 `YIMU_TOKEN` 相同（网页版 JWT）。只放进仓库 Secrets，不要提交，
+> 也不要写进日志；测试失败时 workflow 不写已测标记，下一轮 schedule 会继续重试。
 
 ## 安全
 
